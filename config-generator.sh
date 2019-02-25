@@ -59,18 +59,16 @@ fi
 
 cat <<EOF>> $default_cfg
 config_opts['root'] = '$platform_name-$platform_arch'
-config_opts['chroot_setup_cmd'] = ('install', 'basesystem', 'rosa-release-server', 'gnupg', 'shadow', 'rpm-build', 'glibc-devel' ,'wget', 'yum-utils')
+config_opts['chroot_setup_cmd'] = 'install @buildsys-build'
 config_opts['package_manager'] = 'yum'
-config_opts['dnf_common_opts'] = ['--refresh', '--disableplugin=local', '--setopt=deltarpm=False', '--forcearch=$platform_arch']
-config_opts['dnf_builddep_opts'] = ['--refresh', '--forcearch=$platform_arch']
 config_opts['useradd'] = '/usr/sbin/useradd -o -m -u %(uid)s -g %(gid)s -d %(home)s %(user)s'
-config_opts['releasever'] = '0' # at some point, this should be set by ABF
+config_opts['releasever'] = '7' # at some point, this should be set by ABF
 config_opts['use_nspawn'] = False
 config_opts['tar'] = "tar"
 config_opts['basedir'] = '/var/lib/mock/'
 config_opts['cache_topdir'] = '/var/cache/mock/'
 
-config_opts['dist'] = 'cooker'  # only useful for --resultdir variable subst
+config_opts['dist'] = 'el7'  # only useful for --resultdir variable subst
 config_opts['macros']['%packager'] = '$uname <$email>'
 config_opts['macros']['%_topdir'] = '%s/build' % config_opts['chroothome']
 config_opts['macros']['%_rpmfilename'] = '%%{NAME}-%%{VERSION}-%%{RELEASE}-%%{DISTTAG}.%%{ARCH}.rpm'
