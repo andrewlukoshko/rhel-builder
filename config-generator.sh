@@ -74,9 +74,9 @@ config_opts['macros']['%_topdir'] = '%s/build' % config_opts['chroothome']
 config_opts['macros']['%_rpmfilename'] = '%%{NAME}-%%{VERSION}-%%{RELEASE}-%%{DISTTAG}.%%{ARCH}.rpm'
 config_opts['macros']['%cross_compiling'] = '0' # ABF should generally be considered native builds
 config_opts['plugin_conf']['ccache_enable'] = False
-config_opts['plugin_conf']['root_cache_enable'] = '$rebuild_cache'
-config_opts['plugin_conf']['root_cache_opts']['compress_program'] = "xz"
-config_opts['plugin_conf']['root_cache_opts']['extension'] = ".xz"
+#config_opts['plugin_conf']['root_cache_enable'] = '$rebuild_cache'
+#config_opts['plugin_conf']['root_cache_opts']['compress_program'] = "xz"
+#config_opts['plugin_conf']['root_cache_opts']['extension'] = ".xz"
 config_opts['yum.conf'] = """
 [main]
 keepcache=1
