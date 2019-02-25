@@ -33,6 +33,7 @@ config_opts['chroot_setup_cmd'] = 'install @buildsys-build'
 config_opts['package_manager'] = 'yum'
 config_opts['useradd'] = '/usr/sbin/useradd -o -m -u %(uid)s -g %(gid)s -d %(home)s %(user)s'
 config_opts['releasever'] = '7' # at some point, this should be set by ABF
+config_opts['use_nspawn'] = False
 config_opts['basedir'] = '/var/lib/mock/'
 config_opts['cache_topdir'] = '/var/cache/mock/'
 
