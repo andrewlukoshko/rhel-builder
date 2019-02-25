@@ -44,6 +44,7 @@ rerun_tests="$RERUN_TESTS"
 use_mock_cache="$MOCK_CACHE"
 # list of packages for tests relaunch
 packages="$PACKAGES"
+commit_hash="$COMMIT_HASH"
 
 if [ "$(uname -m)" = 'x86_64' ] && printf '%s\n' "${arch}" | grep -qE 'i[0-9]86'; then
 	# Change the kernel personality so build scripts don't think
@@ -473,6 +474,10 @@ clone_repo() {
 			cd -
 		else
 			git clone "$git_repo" "${HOME}"/"${PACKAGE}"
+			pushd ${HOME}/${PACKAGE}
+				git checkout $commit_hash
+			popd
+        popd
 		fi
 		rc=$?
 		try_reclone=false
