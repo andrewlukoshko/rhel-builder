@@ -2,11 +2,10 @@ FROM rosalab/rels:7.5
 
 RUN rm -f /etc/localtime \
  && ln -s /usr/share/zoneinfo/UTC /etc/localtime \
- yum install -y mock git curl sudo builder-c yum-utils \
+ && yum install -y mock git curl sudo builder-c yum-utils \
  && sed -i 's!openmandriva.org!rosalinux.ru!g' /etc/builder-c/filestore_upload.sh \
  && sed -i 's!file-store!abf-n-file-store!g' /etc/builder-c/filestore_upload.sh \
  && sed -i -e "s/Defaults    requiretty.*/ #Defaults    requiretty/g" /etc/sudoers \
- && groupadd mock \
  && echo "%mock ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
  && adduser omv \
  && usermod -a -G mock omv \
