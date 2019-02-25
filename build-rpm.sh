@@ -477,7 +477,6 @@ clone_repo() {
 			pushd ${HOME}/${PACKAGE}
 				git checkout $commit_hash
 			popd
-        popd
 		fi
 		rc=$?
 		try_reclone=false
