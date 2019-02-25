@@ -68,7 +68,7 @@ config_opts['tar'] = "tar"
 config_opts['basedir'] = '/var/lib/mock/'
 config_opts['cache_topdir'] = '/var/cache/mock/'
 
-config_opts['dist'] = 'el7'  # only useful for --resultdir variable subst
+config_opts['dist'] = 'res7'  # only useful for --resultdir variable subst
 config_opts['macros']['%packager'] = '$uname <$email>'
 config_opts['macros']['%_topdir'] = '%s/build' % config_opts['chroothome']
 config_opts['macros']['%_rpmfilename'] = '%%{NAME}-%%{VERSION}-%%{RELEASE}-%%{DISTTAG}.%%{ARCH}.rpm'
