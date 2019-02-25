@@ -101,7 +101,7 @@ container_data() {
 			release=${nevr[3]}
 
 			dep_list=""
-			[[ ! "${fullname}" =~ .*src.rpm$ ]] && dep_list=$(if [[ $(repoquery -q --latest-limit=1 --qf "%{NAME}\\n" --whatrequires ${name} | wc -l ) -ne 0 ]];then repoquery -q --latest-limit=1 --qf "%{NAME}\\n" --whatrequires ${name} | sort -u | xargs repoquery -q --latest-limit=1 --qf "%{SOURCERPM}\\n" | rev | cut -f3- -d- | rev | sort -u | xargs echo; fi)
+			[[ ! "${fullname}" =~ .*src.rpm$ ]] && dep_list=$(if [[ $(repoquery -q --qf "%{NAME}\\n" --whatrequires ${name} | wc -l ) -ne 0 ]];then repoquery -q --qf "%{NAME}\\n" --whatrequires ${name} | sort -u | xargs repoquery -q --qf "%{SOURCERPM}\\n" | rev | cut -f3- -d- | rev | sort -u | xargs echo; fi)
 			sha1=$(sha1sum ${rpm} | awk '{ print $1 }')
 
 			echo "--> dep_list for '${name}':"
@@ -267,7 +267,7 @@ test_rpm() {
 			[ "${RPM_EPOCH}" = '(none)' ] && RPM_EPOCH='0'
 			RPM_VERREL=$(rpm -qp --qf "%{VERSION}-%{RELEASE}" "${OUTPUT_FOLDER}"/"$i")
 			RPM_EVR="${RPM_EPOCH}:${RPM_VERREL}"
-			REPO_EVR=$(repoquery -q --qf "%{EPOCH}:%{VERSION}-%{RELEASE}" --latest-limit=1 "${RPM_NAME}")
+			REPO_EVR=$(repoquery -q --qf "%{EPOCH}:%{VERSION}-%{RELEASE}" "${RPM_NAME}")
 
 			if [ ! -z "${REPO_EVR}" ]; then
 				rpmdev-vercmp "${RPM_EVR}" "${REPO_EVR}"
