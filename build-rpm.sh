@@ -267,7 +267,7 @@ test_rpm() {
 			[ "${RPM_EPOCH}" = '(none)' ] && RPM_EPOCH='0'
 			RPM_VERREL=$(rpm -qp --qf "%{VERSION}-%{RELEASE}" "${OUTPUT_FOLDER}"/"$i")
 			RPM_EVR="${RPM_EPOCH}:${RPM_VERREL}"
-			REPO_EVR=$(yum repoquery -q --qf "%{EPOCH}:%{VERSION}-%{RELEASE}" --latest-limit=1 "${RPM_NAME}")
+			REPO_EVR=$(repoquery -q --qf "%{EPOCH}:%{VERSION}-%{RELEASE}" --latest-limit=1 "${RPM_NAME}")
 
 			if [ ! -z "${REPO_EVR}" ]; then
 				rpmdev-vercmp "${RPM_EVR}" "${REPO_EVR}"
