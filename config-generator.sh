@@ -36,6 +36,9 @@ config_opts['releasever'] = '7' # at some point, this should be set by ABF
 config_opts['use_nspawn'] = False
 config_opts['basedir'] = '/var/lib/mock/'
 config_opts['cache_topdir'] = '/var/cache/mock/'
+config_opts['plugin_conf']['root_cache_enable'] = True
+config_opts['plugin_conf']['root_cache_opts']['age_check'] = True
+config_opts['plugin_conf']['root_cache_opts']['max_age_days'] = 15
 
 config_opts['dist'] = 'res7'  # only useful for --resultdir variable subst
 config_opts['macros']['%packager'] = '$uname <$email>'
