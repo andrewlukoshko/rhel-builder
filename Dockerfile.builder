@@ -1,11 +1,11 @@
 FROM rosalab/rels:7.5
 
-COPY builder-c-1.3.2-2.x86_64.rpm /tmp/
+COPY builder-c-1.3.3-1.x86_64.rpm /tmp/
 
 RUN rm -f /etc/localtime \
  && ln -s /usr/share/zoneinfo/UTC /etc/localtime \
  && yum install -y mock git curl sudo builder-c yum-utils rpmdevtools \
- && yum install -y /tmp/builder-c-1.3.2-2.x86_64.rpm \
+ && yum install -y /tmp/builder-c-1.3.3-1.x86_64.rpm \
  && sed -i 's!file-store!abf-n-file-store!g' /etc/builder-c/filestore_upload.sh \
  && sed -i 's!openmandriva.org!rosalinux.ru!g' /etc/builder-c/filestore_upload.sh \
  && sed -i -e "s/Defaults    requiretty.*/ #Defaults    requiretty/g" /etc/sudoers \
