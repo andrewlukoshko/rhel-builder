@@ -31,6 +31,7 @@ config_opts['legal_host_arches'] = ('i586', 'i686', 'x86_64')
 config_opts['root'] = '$platform_name-$platform_arch'
 config_opts['chroot_setup_cmd'] = 'install @buildsys-build'
 config_opts['package_manager'] = 'yum'
+config_opts['rpmbuild_networking'] = True
 config_opts['useradd'] = '/usr/sbin/useradd -o -m -u %(uid)s -g %(gid)s -d %(home)s %(user)s'
 config_opts['releasever'] = '7' # at some point, this should be set by ABF
 config_opts['use_nspawn'] = False
