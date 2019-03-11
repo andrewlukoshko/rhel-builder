@@ -31,11 +31,16 @@ config_opts['legal_host_arches'] = ('i586', 'i686', 'x86_64')
 config_opts['root'] = '$platform_name-$platform_arch'
 config_opts['chroot_setup_cmd'] = 'install @buildsys-build'
 config_opts['package_manager'] = 'yum'
+config_opts['rpmbuild_networking'] = True
 config_opts['useradd'] = '/usr/sbin/useradd -o -m -u %(uid)s -g %(gid)s -d %(home)s %(user)s'
 config_opts['releasever'] = '7' # at some point, this should be set by ABF
 config_opts['use_nspawn'] = False
 config_opts['basedir'] = '/var/lib/mock/'
+config_opts['use_host_resolv'] = True
 config_opts['cache_topdir'] = '/var/cache/mock/'
+config_opts['plugin_conf']['root_cache_enable'] = True
+config_opts['plugin_conf']['root_cache_opts']['age_check'] = True
+config_opts['plugin_conf']['root_cache_opts']['max_age_days'] = 15
 
 config_opts['dist'] = 'res7'  # only useful for --resultdir variable subst
 config_opts['macros']['%packager'] = '$uname <$email>'
