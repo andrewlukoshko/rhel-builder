@@ -322,6 +322,7 @@ build_rpm() {
 	fi
 
 	printf '%s\n' '--> Build src.rpm'
+	spec_name=`ls -1 | grep '.spec$'`
 	try_rebuild=true
 	retry=0
 	while $try_rebuild; do
@@ -330,9 +331,9 @@ build_rpm() {
 		sudo rm -rf /var/lib/mock/"${platform_name:?}"-"${platform_arch:?}"/root/var/cache/yum/*
 		if [ -f /var/cache/mock/"${platform_name}"-"${platform_arch}"/root_cache/cache.tar.xz ] && [ "$use_mock_cache" = 'True' ]; then
 			printf '%s\n' "--> Building with cached chroot ..."
-			$MOCK_BIN -v --update --configdir=$config_dir --buildsrpm --spec=$build_package/${PACKAGE}.spec --sources=$build_package --no-cleanup-after --no-clean $extra_build_src_rpm_options --resultdir="${OUTPUT_FOLDER}"
+			$MOCK_BIN -v --update --configdir=$config_dir --buildsrpm --spec=$build_package/${spec_name} --sources=$build_package --no-cleanup-after --no-clean $extra_build_src_rpm_options --resultdir="${OUTPUT_FOLDER}"
 		else
-			$MOCK_BIN -v --update --configdir=$config_dir --buildsrpm --spec=$build_package/${PACKAGE}.spec --sources=$build_package --no-cleanup-after $extra_build_src_rpm_options --resultdir="${OUTPUT_FOLDER}"
+			$MOCK_BIN -v --update --configdir=$config_dir --buildsrpm --spec=$build_package/${spec_name} --sources=$build_package --no-cleanup-after $extra_build_src_rpm_options --resultdir="${OUTPUT_FOLDER}"
 		fi
 
 		rc=${PIPESTATUS[0]}
