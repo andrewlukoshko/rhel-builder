@@ -6,7 +6,7 @@ cleanup() {
 	sudo rm -fv /etc/rpm/platform
 	sudo rm -fv /etc/mock/default.cfg
 	sudo rm -rf /var/lib/mock/*
-	sudo rm -rf /var/cache/mock/*
+	sudo rm -rf /var/cache/mock/*-${platform_arch}/yum_cache
 	sudo rm -rf /var/cache/yum/*
 
 	sudo rm -rf "${HOME}"/"${PACKAGE:?}"
@@ -27,7 +27,7 @@ OUTPUT_FOLDER="${HOME}"/output
 
 GREP_PATTERN='error: (.*)$|Segmentation Fault|cannot find (.*)$|undefined reference (.*)$|cp: (.*)$|Hunk #1 FAILED|\(due to unsatisfied(.*)$'
 
-filestore_url="http://abf-n-file-store.rosalinux.ru/api/v1/file_stores"
+filestore_url="http://file-store.rosalinux.ru/api/v1/file_stores"
 platform_arch="$PLATFORM_ARCH"
 platform_name=${PLATFORM_NAME:-"rosa-server75"}
 uname="$UNAME"
@@ -308,6 +308,7 @@ test_rpm() {
 
 build_rpm() {
 	arm_platform_detector
+	sudo touch -d "23 hours ago" $config_dir/default.cfg
 
 	# We will rerun the build in case when repository is modified in the middle,
 	# but for safety let's limit number of retest attempts
