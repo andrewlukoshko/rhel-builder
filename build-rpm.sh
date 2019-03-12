@@ -323,7 +323,7 @@ build_rpm() {
 	fi
 
 	printf '%s\n' '--> Build src.rpm'
-	spec_name=`ls -1 | grep '.spec$'`
+	spec_name=`ls -1 $build_package | grep '.spec$'`
 	try_rebuild=true
 	retry=0
 	while $try_rebuild; do
