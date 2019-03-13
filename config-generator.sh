@@ -25,8 +25,16 @@ gen_included_repos() {
     printf '%s\n' '"""' >> "${default_cfg}"
 }
 
+if [ "${platform_arch}" = 'i586' ]; then
+cat <<EOF> $default_cfg
+config_opts['target_arch'] = 'i686'
+EOF
+else
 cat <<EOF> $default_cfg
 config_opts['target_arch'] = '$platform_arch'
+EOF
+fi
+cat <<EOF>> $default_cfg
 config_opts['legal_host_arches'] = ('i586', 'i686', 'x86_64')
 config_opts['root'] = '$platform_name-$platform_arch'
 config_opts['chroot_setup_cmd'] = 'install @buildsys-build'
