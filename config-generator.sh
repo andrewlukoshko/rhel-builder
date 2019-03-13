@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 printf '%s\n' '--> ROSA Server platform config generator.'
 
 extra_cfg_options="$EXTRA_CFG_OPTIONS"
