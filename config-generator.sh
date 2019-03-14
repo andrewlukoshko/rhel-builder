@@ -38,7 +38,7 @@ fi
 cat <<EOF>> $default_cfg
 config_opts['legal_host_arches'] = ('i586', 'i686', 'x86_64')
 config_opts['root'] = '$platform_name-$platform_arch'
-config_opts['chroot_setup_cmd'] = 'install @buildsys-build'
+config_opts['chroot_setup_cmd'] = 'install bash bzip2 coreutils cpio diffutils system-release findutils gawk gcc gcc-c++ grep gzip info make patch redhat-rpm-config rpm-build sed shadow-utils tar unzip util-linux which xz'
 config_opts['package_manager'] = 'yum'
 config_opts['rpmbuild_networking'] = True
 config_opts['useradd'] = '/usr/sbin/useradd -o -m -u %(uid)s -g %(gid)s -d %(home)s %(user)s'
