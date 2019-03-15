@@ -1,4 +1,4 @@
-FROM rosalab/rels:latest
+FROM rosalab/rels7:latest
 
 RUN rm -f /etc/localtime \
  && ln -s /usr/share/zoneinfo/UTC /etc/localtime \
