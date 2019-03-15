@@ -155,8 +155,8 @@ if [ -z "$version" ]; then
     version=$name
 fi
 
-tar --numeric-owner -c -C "$target" . | docker import - $name:$version
+tar --numeric-owner -c -C "$target" . | docker import - $name:latest
 
-docker run -i -t --rm $name:$version /bin/bash -c 'echo success'
+docker run -i -t --rm $name:latest /bin/bash -c 'echo success'
 
 rm -rf "$target"
