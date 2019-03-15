@@ -1,4 +1,4 @@
-FROM rosalab/rels:7.5
+FROM rosalab/rels7:latest
 
 COPY builder-c-1.3.4-1.x86_64.rpm /tmp/
 
