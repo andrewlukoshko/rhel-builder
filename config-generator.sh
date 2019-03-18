@@ -52,7 +52,7 @@ config_opts['plugin_conf']['root_cache_enable'] = False
 config_opts['plugin_conf']['root_cache_opts']['age_check'] = True
 config_opts['plugin_conf']['root_cache_opts']['max_age_days'] = 15
 
-config_opts['dist'] = 'res7'  # only useful for --resultdir variable subst
+config_opts['dist'] = '${platform_name}'  # only useful for --resultdir variable subst
 config_opts['macros']['%packager'] = '$uname <$email>'
 config_opts['macros']['%_topdir'] = '%s/build' % config_opts['chroothome']
 config_opts['macros']['%cross_compiling'] = '0' # ABF should generally be considered native builds
