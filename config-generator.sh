@@ -53,7 +53,7 @@ config_opts['plugin_conf']['root_cache_opts']['age_check'] = True
 config_opts['plugin_conf']['root_cache_opts']['max_age_days'] = 15
 
 config_opts['plugin_conf']['tmpfs_enable'] = True
-config_opts['plugin_conf']['tmpfs_opts']['required_ram_mb'] = 64000m
+config_opts['plugin_conf']['tmpfs_opts']['required_ram_mb'] = 64000
 config_opts['plugin_conf']['tmpfs_opts']['max_fs_size'] = '32000m'
 
 config_opts['dist'] = '${platform_name}'  # only useful for --resultdir variable subst
