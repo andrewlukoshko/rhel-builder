@@ -48,7 +48,7 @@ config_opts['use_nspawn'] = False
 config_opts['basedir'] = '/var/lib/mock/'
 config_opts['use_host_resolv'] = True
 config_opts['cache_topdir'] = '/var/cache/mock/'
-config_opts['plugin_conf']['root_cache_enable'] = True
+config_opts['plugin_conf']['root_cache_enable'] = False
 config_opts['plugin_conf']['root_cache_opts']['age_check'] = True
 config_opts['plugin_conf']['root_cache_opts']['max_age_days'] = 15
 
