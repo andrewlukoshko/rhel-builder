@@ -306,6 +306,64 @@ test_rpm() {
 	fi
 }
 
+
+validate_arch() {
+        BUILD_TYPE="$(grep -i '^excludearch:.*$\|^exclusivearch:.*$' *.spec | awk -F'[:]' '{print $1}')"
+        [[ ${#BUILD_TYPE} -gt 15 ]] && printf '%s\n' "Spec file has set ExcludeArch and ExclusiveArch. Exiting!" && exit 1
+        SPEC_ARCH=( $(grep -i '^excludearch:.*$\|^exclusivearch:.*$' *.spec | awk -F'[[:blank:]]' '{$1="";print $0}' | sort -u) )
+        validate_build() {
+                local _PLATFORM=($1)
+                # count for occurences
+                for item in ${SPEC_ARCH[@]}; do
+                        if [[ "${_PLATFORM[@]}" =~ "${item}" ]] ; then
+                                FOUND_MATCH=1
+                                printf '%s\n' "--> Found match of ${item} in ${_PLATFORM[@]} for ${BUILD_TYPE}"
+                        fi
+                done
+                if [ -n "${FOUND_MATCH}" ] && [ "${BUILD_TYPE,,}" = 'excludearch' ]; then
+                        printf '%s\n' "--> Build for this architecture is forbidden because of ${BUILD_TYPE} set in spec file!"
+                        exit 6
+                elif [ -z "${FOUND_MATCH}" ] && [ "${BUILD_TYPE,,}" = 'exclusivearch' ]; then
+                        printf '%s\n' "--> Build for this architecture is forbidden because of ${BUILD_TYPE} set in spec file!"
+                        exit 6
+                else
+                        printf '%s\n' "--> Spec validated for ExcludeArch and ExclusiveArch. Continue building."
+                fi
+        }
+        case ${PLATFORM_ARCH,,} in
+        armv8hcnl)
+                validate_build "arm %arm %{arm} armx %armx %{armx} armv7hl armv7hnl armv8hl armv8hnl armv8hcnl"
+                ;;
+        armv8hnl)
+                validate_build "arm %arm %{arm} armx %armx %{armx} armv7hl armv7hnl armv8hl armv8hnl"
+                ;;
+        armv8hl)
+                validate_build "arm %arm %{arm} armx %armx %{armx} armv7hl armv7hnl armv8hl"
+                ;;
+        armv7hnl)
+                validate_build "arm %arm %{arm} armx %armx %{armx} armv7hl armv7hnl"
+                ;;
+        armv7hl)
+                validate_build "arm %arm %{arm} armx %armx %{armx} armv7hl"
+                ;;
+        aarch64)
+                validate_build "armx %armx %{armx} aarch64"
+                ;;
+        riscv64)
+                validate_build "riscv64"
+                ;;
+        i[3-9]86|znver1_32)
+                validate_build "ix86 %ix86 %{ix86} i686 %i686 %{i686} i586 %i586 %{i586} i386 %i386 %{i386} znver1_32"
+                ;;
+        x86_64|znver1)
+                validate_build "x86_64 %x86_64 %{x86_64} znver1"
+                ;;
+        *)
+                printf '%s\n' "--> ${BUILD_TYPE} validated."
+                ;;
+        esac
+}
+
 build_rpm() {
 	arm_platform_detector
 	sudo touch -d "23 hours ago" $config_dir/default.cfg
@@ -496,10 +554,11 @@ clone_repo() {
 
 	cd "${HOME}"/"${PACKAGE}"
 	# count number of specs (should be 1)
-	find_spec
+  find_spec
 	# check for excludearch or exclusivearch
+  validate_arch
 	# download sources from .abf.yml
-	/bin/sh /rhel/download_sources.sh
+  /bin/sh /rhel/download_sources.sh
 	cd -
 	# build package
 }
