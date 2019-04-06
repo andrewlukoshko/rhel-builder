@@ -308,9 +308,9 @@ test_rpm() {
 
 
 validate_arch() {
-        BUILD_TYPE="$(grep -i '^excludearch:.*$\|^exclusivearch:.*$' *.spec | awk -F'[:]' '{print $1}')"
+        BUILD_TYPE="$(grep -m1 -i '^excludearch:.*$\|^exclusivearch:.*$' *.spec | awk -F'[:]' '{print $1}')"
         [[ ${#BUILD_TYPE} -gt 15 ]] && printf '%s\n' "Spec file has set ExcludeArch and ExclusiveArch. Exiting!" && exit 1
-        SPEC_ARCH=( $(grep -i '^excludearch:.*$\|^exclusivearch:.*$' *.spec | awk -F'[[:blank:]]' '{$1="";print $0}' | sort -u) )
+        SPEC_ARCH=( $(grep -m1 -i '^excludearch:.*$\|^exclusivearch:.*$' *.spec | awk -F'[[:blank:]]' '{$1="";print $0}' | sort -u) )
         validate_build() {
                 local _PLATFORM=($1)
                 # count for occurences
