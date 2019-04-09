@@ -173,139 +173,102 @@ arm_platform_detector(){
 }
 
 test_rpm() {
-	local PERSONALITY
-	local EXTRA_ARGS
+        # Rerun tests
+        PACKAGES=${packages}
+        use_extra_tests=$use_extra_tests
 
-	# Rerun tests
-	PACKAGES=${packages}
-	chroot_path=$chroot_path
-	use_extra_tests=$use_extra_tests
+        test_code=0
+        test_log="$OUTPUT_FOLDER"/tests.log
+        printf '%s\n' '--> Starting RPM tests.' >> $test_log
 
-	test_code=0
-	test_log="$OUTPUT_FOLDER"/tests.log
-	printf '%s\n' '--> Starting RPM tests.' >> $test_log
-	printf '%s\n' "---> Test for $packages for $platform_arch running on $cpu $(hostname)" >> $test_log
+        if [ "$rerun_tests" = 'true' ]; then
+                [ "$packages" = '' ] && printf '%s\n' '--> No packages for testing. Something is wrong. Exiting. !!!' >> $test_log && exit 1
 
-	if echo $platform_arch |grep -qE '^arm' && [ "$cpu" = "aarch64" ]; then
-		PERSONALITY="setarch linux32 -B"
-		EXTRA_ARGS="--forcearch=armv7hnl"
-	elif echo $platform_arch |grep -qE '^(i.86|znver1_32)' && [ "$cpu" = "x86_64" ]; then
-		PERSONALITY="i386"
-		EXTRA_ARGS=""
-	else
-		PERSONALITY=""
-		EXTRA_ARGS=""
-	fi
+                [ ! -e "$OUTPUT_FOLDER" ] && mkdir -p "$OUTPUT_FOLDER"
+                [ ! -e "$build_package" ] && mkdir -p "$build_package"
 
-	if [ "$rerun_tests" = 'true' ]; then
-		[ "$packages" = '' ] && printf '%s\n' '--> No packages for testing. Something is wrong. Exiting. !!!' >> $test_log && exit 1
+                test_log="${OUTPUT_FOLDER}"/tests-"$(printf '%(%F-%R)T')".log
+                printf '%s\n' "--> Re-running tests on $(date -u)" >> $test_log
+                arr=($packages)
+                cd "$build_package"
+                for package in ${arr[@]} ; do
+                        printf '%s\n' "--> Downloading '$package'..." >> $test_log
+                        wget http://file-store.openmandriva.org/api/v1/file_stores/"$package" --content-disposition --no-check-certificate
+                        rc=$?
+                        if [ "${rc}" != '0' ]; then
+                                printf '%s\n' "--> Error on extracting package with sha1 '$package'!!!" >> $test_log
+                                exit "${rc}"
+                        fi
+                done
+                cd -
+                if [ -f /var/cache/mock/"${platform_name}"-"${platform_arch}"/root_cache/cache.tar.xz ] && [ "$use_mock_cache" = 'True' ]; then
+                        printf '%s\n' "--> Testing with cached chroot ..." >> $test_log
+                        $MOCK_BIN --init --configdir $config_dir -v --no-cleanup-after --no-clean
+                else
+                        # useless logic
+                        $MOCK_BIN --init --configdir $config_dir -v --no-cleanup-after
+                fi
+                OUTPUT_FOLDER="$build_package"
+        fi
 
-		[ ! -e "$OUTPUT_FOLDER" ] && mkdir -p "$OUTPUT_FOLDER"
-		[ ! -e "$build_package" ] && mkdir -p "$build_package"
+        printf '%s\n' '--> Checking if rpm packages can be installed.' >> $test_log
 
-		test_log="${OUTPUT_FOLDER}"/tests-"$(printf '%(%F-%R)T')".log
-		printf '%s\n' "--> Re-running tests on $(date -u)" >> $test_log
-		arr=($packages)
-		cd "$build_package"
-		for package in ${arr[@]} ; do
-			printf '%s\n' "--> Downloading '$package'..." >> $test_log
-			wget http://abf-n-file-store.rosalinux.ru/api/v1/file_stores/"$package" --content-disposition --no-check-certificate
-			rc=$?
-			if [ "${rc}" != '0' ]; then
-				printf '%s\n' "--> Error on extracting package with sha1 '$package'!!!" >> $test_log
-				exit "${rc}"
-			fi
-		done
-		cd -
-		if [ -f /var/cache/mock/"${platform_name}"-"${platform_arch}"/root_cache/cache.tar.xz ] && [ "$use_mock_cache" = 'True' ]; then
-			printf '%s\n' "--> Testing with cached chroot ..." >> $test_log
-			$MOCK_BIN --init --configdir $config_dir -v --no-cleanup-after --no-clean
-		else
-			$MOCK_BIN --init --configdir $config_dir -v --no-cleanup-after
-		fi
-		OUTPUT_FOLDER="$build_package"
-	fi
+        sudo rm -rf /var/cache/yum/*
+        sudo rm -rf /var/lib/mock/"${platform_name:?}"-"${platform_arch:?}"/
+        mock --init --configdir /etc/mock/ $OUTPUT_FOLDER/*.src.rpm >> "${test_log}".tmp
+        mock --init --configdir /etc/mock/ --install $(ls "$OUTPUT_FOLDER"/*.rpm | grep -v .src.rpm) >> "${test_log}".tmp 2>&1
 
-	printf '%s\n' '--> Checking if rpm packages can be installed.' >> $test_log
-	TEST_CHROOT_PATH=$($MOCK_BIN --configdir=$config_dir --print-root-path)
+        cat "$test_log".tmp >> "${test_log}"
+        printf '%s\n' "--> Tests finished at $(date -u)" >> "$test_log"
+        printf '%s\n' "Test code output: $test_code" >> "$test_log" 2>&1
+        if [ "${test_code}" = '0' ] && [ "$use_extra_tests" = 'true' ]; then
+                printf '%s\n' '--> Checking if same or older version of the package already exists in repositories' >> "${test_log}"
 
-	try_retest=true
-	retry=0
-	while $try_retest; do
-		sudo rm -rf /var/cache/yum/*
-		sudo rm -rf /var/lib/mock/"${platform_name:?}"-"${platform_arch:?}"/root/var/cache/yum/*
-		sudo yum clean all
-		sudo yum --installroot=${TEST_CHROOT_PATH} clean all
-		echo "---> running $PERSONALITY yum --installroot=${TEST_CHROOT_PATH} --assumeyes --nogpgcheck --setopt=install_weak_deps=False --setopt=tsflags=test builddep $OUTPUT_FOLDER/*.src.rpm" >> "${test_log}".tmp
-		sudo $PERSONALITY chroot ${TEST_CHROOT_PATH} uname -a >>"${test_log}".tmp
-		sudo $PERSONALITY yum --installroot="${TEST_CHROOT_PATH}" --assumeyes ${EXTRA_ARGS} --nogpgcheck --setopt=install_weak_deps=False --setopt=tsflags=test builddep "$OUTPUT_FOLDER"/*.src.rpm >> "${test_log}".tmp 2>&1
-		sudo $PERSONALITY yum --installroot="${TEST_CHROOT_PATH}" --assumeyes ${EXTRA_ARGS} --nogpgcheck --setopt=install_weak_deps=False --setopt=tsflags=test install $(ls "$OUTPUT_FOLDER"/*.rpm | grep -v .src.rpm) >> "${test_log}".tmp 2>&1
-		test_code=$?
-		try_retest=false
-		if [ "${test_code}" != 0 ] && [ "${retry}" -lt "${MAX_RETRIES}" ]; then
-			if grep -q "$RETRY_GREP_STR" "${test_log}".tmp; then
-				printf '%s\n' '--> Repository was changed in the middle, will rerun the tests' >> $test_log
-				sleep ${WAIT_TIME}
-				sudo rm -rf "${TEST_CHROOT_PATH}"/test_root/var/cache/yum/* >> $test_log 2>&1
-				sudo $PERSONALITY yum --installroot="${TEST_CHROOT_PATH}/test_root/" makecache >> $test_log 2>&1
-				try_retest=true
-				(( retry=$retry+1 ))
-			fi
-		fi
-	done
+                for i in $(ls "${OUTPUT_FOLDER}" | grep .rpm); do
+                        RPM_NAME=$(rpm -qp --qf "%{NAME}" "${OUTPUT_FOLDER}"/"$i")
+                        RPM_EPOCH=$(rpm -qp --qf "%{EPOCH}" "${OUTPUT_FOLDER}"/"$i")
 
-	cat "$test_log".tmp >> "${test_log}"
-	printf '%s\n' "--> Tests finished at $(date -u)" >> "$test_log"
-	printf '%s\n' "Test code output: $test_code" >> "$test_log" 2>&1
-	if [ "${test_code}" = '0' ] && [ "$use_extra_tests" = 'true' ]; then
-		printf '%s\n' '--> Checking if same or older version of the package already exists in repositories' >> "${test_log}"
+                        [ "${RPM_EPOCH}" = '(none)' ] && RPM_EPOCH='0'
+                        RPM_VERREL=$(rpm -qp --qf "%{VERSION}-%{RELEASE}" "${OUTPUT_FOLDER}"/"$i")
+                        RPM_EVR="${RPM_EPOCH}:${RPM_VERREL}"
+                        REPO_EVR=$(repoquery -q --qf "%{EPOCH}:%{VERSION}-%{RELEASE}" "${RPM_NAME}")
 
-		for i in $(ls "${OUTPUT_FOLDER}" | grep .rpm); do
-			RPM_NAME=$(rpm -qp --qf "%{NAME}" "${OUTPUT_FOLDER}"/"$i")
-			RPM_EPOCH=$(rpm -qp --qf "%{EPOCH}" "${OUTPUT_FOLDER}"/"$i")
+                        if [ ! -z "${REPO_EVR}" ]; then
+                                rpmdev-vercmp "${RPM_EVR}" "${REPO_EVR}"
+                                test_code="$?"
+                                if [ "${test_code}" -eq 11 ]; then
+                                        # Proposed rpm is newer than what's in the repo
+                                        test_code='0'
+                                        printf '%s\n' "Package $i is newer than what's in the repo. Extra tests passed: $test_code" >> "${test_log}"
+                                else
+                                        # Proposed rpm is either the same, older, or another problem
+                                        test_code='5'
+                                        printf '%s\n' "Package $i is either the same, older, or another problem. Extra tests failed: $test_code" >> "${test_log}"
+                                        printf 'Compared %s %s (new) to %s (repo) for %s\n' "$RPM_NAME" "$RPM_EVR" "$REPO_EVR" "$i" >> "${test_log}"
+                                        rpmdev-vercmp "${RPM_EVR}" "${REPO_EVR}" >> "${test_log}"
+                                        # package exist in repo, let's fail tests
+                                        rm -f "${test_log}".tmp && exit "${test_code}"
+                                fi
+                        else
+                                # It does not exist in the repo, so it's okay to go in
+                                test_code='0'
+                                printf '%s\n' "Extra tests finished without errors: $test_code" >> "${test_log}"
+                        fi
+                done
+        fi
+        rm -f "${test_log}".tmp
 
-			[ "${RPM_EPOCH}" = '(none)' ] && RPM_EPOCH='0'
-			RPM_VERREL=$(rpm -qp --qf "%{VERSION}-%{RELEASE}" "${OUTPUT_FOLDER}"/"$i")
-			RPM_EVR="${RPM_EPOCH}:${RPM_VERREL}"
-			REPO_EVR=$(repoquery -q --qf "%{EPOCH}:%{VERSION}-%{RELEASE}" "${RPM_NAME}")
-
-			if [ ! -z "${REPO_EVR}" ]; then
-				rpmdev-vercmp "${RPM_EVR}" "${REPO_EVR}"
-				test_code="$?"
-				if [ "${test_code}" -eq 11 ]; then
-					# Proposed rpm is newer than what's in the repo
-					test_code='0'
-					printf '%s\n' "Package $i is newer than what's in the repo. Extra tests passed: $test_code" >> "${test_log}"
-				else
-					# Proposed rpm is either the same, older, or another problem
-					test_code='5'
-					printf '%s\n' "Package $i is either the same, older, or another problem. Extra tests failed: $test_code" >> "${test_log}"
-					printf 'Compared %s %s (new) to %s (repo) for %s\n' "$RPM_NAME" "$RPM_EVR" "$REPO_EVR" "$i" >> "${test_log}"
-					rpmdev-vercmp "${RPM_EVR}" "${REPO_EVR}" >> "${test_log}"
-				fi
-			else
-				# It does not exist in the repo, so it's okay to go in
-				test_code='0'
-				printf '%s\n' "Extra tests finished without errors: $test_code" >> "${test_log}"
-			fi
-		done
-	fi
-	sudo rm -f "${TEST_CHROOT_PATH}"/*.rpm
-	sudo rm -rf "${TEST_CHROOT_PATH}"/test_root
-	rm -f "${test_log}".tmp
-
-	# Check exit code after testing
-	if [ "${test_code}" != '0' ]; then
-		printf '%s\n' '--> Test failed, see: tests.log'
-		test_code=5
-		[ "$rerun_tests" = '' ] && container_data
-		[ "$rerun_tests" = 'true' ] && cleanup
-		exit "${test_code}"
-	else
-		return "${test_code}"
-	fi
+        # Check exit code after testing
+        if [ "${test_code}" != '0' ]; then
+                printf '%s\n' '--> Test failed, see: tests.log'
+                test_code=5
+                [ "$rerun_tests" = '' ] && container_data
+                [ "$rerun_tests" = 'true' ] && cleanup
+                exit "${test_code}"
+        else
+                return "${test_code}"
+        fi
 }
-
 
 validate_arch() {
         BUILD_TYPE="$(grep -m1 -i '^excludearch:.*$\|^exclusivearch:.*$' *.spec | awk -F'[:]' '{print $1}')"
