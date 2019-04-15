@@ -220,7 +220,7 @@ test_rpm() {
 	# due to keep_mounted option not available
 	# i think it's a kind of bug
         sed -i '/.*tmpfs/d' /etc/mock/default.cfg
-        mock --init --configdir /etc/mock/ --install $(ls "$OUTPUT_FOLDER"/*.rpm | grep -v .src.rpm) >> "${test_log}" 2>&1
+        mock --init --no-cleanup-after --no-clean --configdir /etc/mock/ --install $(ls "$OUTPUT_FOLDER"/*.rpm | grep -v .src.rpm) >> "${test_log}" 2>&1
         CHROOT_PATH="$(mock --print-root-path)"
 
         printf '%s\n' "--> Tests finished at $(date -u)" >> "$test_log"
