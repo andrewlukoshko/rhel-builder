@@ -215,7 +215,11 @@ test_rpm() {
 
         sudo rm -rf /var/cache/yum/*
         sudo rm -rf /var/lib/mock/"${platform_name:?}"-"${platform_arch:?}"/
-        mock --init --configdir /etc/mock/ $OUTPUT_FOLDER/*.src.rpm >> "${test_log}"
+        # need to perfom repoquery with connected repos
+	# and it's mean that need to disable tmpfs on mock
+	# due to keep_mounted option not available
+	# i think it's a kind of bug
+        sed '/.*tmpfs/d' /etc/mock/default.cfg
         mock --init --configdir /etc/mock/ --install $(ls "$OUTPUT_FOLDER"/*.rpm | grep -v .src.rpm) >> "${test_log}" 2>&1
         CHROOT_PATH="$(mock --print-root-path)"
 
