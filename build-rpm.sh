@@ -219,7 +219,7 @@ test_rpm() {
 	# and it's mean that need to disable tmpfs on mock
 	# due to keep_mounted option not available
 	# i think it's a kind of bug
-        sed '/.*tmpfs/d' /etc/mock/default.cfg
+        sed -i '/.*tmpfs/d' /etc/mock/default.cfg
         mock --init --configdir /etc/mock/ --install $(ls "$OUTPUT_FOLDER"/*.rpm | grep -v .src.rpm) >> "${test_log}" 2>&1
         CHROOT_PATH="$(mock --print-root-path)"
 
