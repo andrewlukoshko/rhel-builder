@@ -215,10 +215,9 @@ test_rpm() {
 
         sudo rm -rf /var/cache/yum/*
         sudo rm -rf /var/lib/mock/"${platform_name:?}"-"${platform_arch:?}"/
-        mock --init --configdir /etc/mock/ $OUTPUT_FOLDER/*.src.rpm >> "${test_log}".tmp
-        mock --init --configdir /etc/mock/ --install $(ls "$OUTPUT_FOLDER"/*.rpm | grep -v .src.rpm) >> "${test_log}".tmp 2>&1
+        mock --init --configdir /etc/mock/ $OUTPUT_FOLDER/*.src.rpm >> "${test_log}"
+        mock --init --configdir /etc/mock/ --install $(ls "$OUTPUT_FOLDER"/*.rpm | grep -v .src.rpm) >> "${test_log}" 2>&1
 
-        cat "$test_log".tmp >> "${test_log}"
         printf '%s\n' "--> Tests finished at $(date -u)" >> "$test_log"
         printf '%s\n' "Test code output: $test_code" >> "$test_log" 2>&1
         if [ "${test_code}" = '0' ] && [ "$use_extra_tests" = 'true' ]; then
@@ -247,7 +246,7 @@ test_rpm() {
                                         printf 'Compared %s %s (new) to %s (repo) for %s\n' "$RPM_NAME" "$RPM_EVR" "$REPO_EVR" "$i" >> "${test_log}"
                                         rpmdev-vercmp "${RPM_EVR}" "${REPO_EVR}" >> "${test_log}"
                                         # package exist in repo, let's fail tests
-					rm -f "${test_log}".tmp && container_data
+					container_data
 					exit "${test_code}"
                                 fi
                         else
@@ -257,8 +256,6 @@ test_rpm() {
                         fi
                 done
         fi
-        rm -f "${test_log}".tmp
-
         # Check exit code after testing
         if [ "${test_code}" != '0' ]; then
                 printf '%s\n' '--> Test failed, see: tests.log'
