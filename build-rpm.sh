@@ -223,7 +223,7 @@ test_rpm() {
         if [ "${test_code}" = '0' ] && [ "$use_extra_tests" = 'true' ]; then
                 printf '%s\n' '--> Checking if same or older version of the package already exists in repositories' >> "${test_log}"
 
-                for i in $(ls "${OUTPUT_FOLDER}" | grep .rpm); do
+                for i in $(ls "${OUTPUT_FOLDER}" | grep .rpm | grep -v .src.rpm); do
                         RPM_NAME=$(rpm -qp --qf "%{NAME}" "${OUTPUT_FOLDER}"/"$i")
                         RPM_EPOCH=$(rpm -qp --qf "%{EPOCH}" "${OUTPUT_FOLDER}"/"$i")
 
