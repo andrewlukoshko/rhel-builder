@@ -231,7 +231,7 @@ test_rpm() {
                         [ "${RPM_EPOCH}" = '(none)' ] && RPM_EPOCH='0'
                         RPM_VERREL=$(rpm -qp --qf "%{VERSION}-%{RELEASE}" "${OUTPUT_FOLDER}"/"$i")
                         RPM_EVR="${RPM_EPOCH}:${RPM_VERREL}"
-                        REPO_EVR=$(repoquery --installroot=${CHROOT_PATH} -q --qf "%{EPOCH}:%{VERSION}-%{RELEASE}" "${RPM_NAME}")
+                        REPO_EVR=$(sudo repoquery --installroot=${CHROOT_PATH} -q --qf "%{EPOCH}:%{VERSION}-%{RELEASE}" "${RPM_NAME}")
                         if [ ! -z "${REPO_EVR}" ]; then
                                 rpmdev-vercmp "${RPM_EVR}" "${REPO_EVR}"
                                 test_code="$?"
