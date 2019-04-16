@@ -221,6 +221,7 @@ test_rpm() {
 	# i think it's a kind of bug
         sudo sed -i '/.*tmpfs/d' /etc/mock/default.cfg
         mock --init --no-cleanup-after --no-clean -v --configdir /etc/mock/ --install $(ls "$OUTPUT_FOLDER"/*.rpm | grep -v .src.rpm) >> "${test_log}" 2>&1
+        test_code=$?
         CHROOT_PATH="$(mock --print-root-path)"
 
         printf '%s\n' "--> Tests finished at $(date -u)" >> "$test_log"
