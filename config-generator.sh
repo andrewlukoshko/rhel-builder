@@ -56,6 +56,11 @@ config_opts['plugin_conf']['tmpfs_enable'] = True
 config_opts['plugin_conf']['tmpfs_opts']['required_ram_mb'] = 64000
 config_opts['plugin_conf']['tmpfs_opts']['max_fs_size'] = '80%'
 
+config_opts['plugin_conf']['package_state_enable'] = True
+config_opts['plugin_conf']['package_state_opts'] = {}
+config_opts['plugin_conf']['package_state_opts']['available_pkgs'] = False
+config_opts['plugin_conf']['package_state_opts']['installed_pkgs'] = True
+
 config_opts['dist'] = '${platform_name}'  # only useful for --resultdir variable subst
 config_opts['macros']['%packager'] = '$uname <$email>'
 config_opts['macros']['%_topdir'] = '%s/build' % config_opts['chroothome']
