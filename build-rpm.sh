@@ -350,7 +350,7 @@ build_rpm() {
 	printf '%s\n' '--> src.rpm build has been done successfully.'
 	printf '%s\n' '--> validate src.rpm for exclusive_arch spec'
 	# validate src.rpm for exclusive_arch
-	python /mdv/check_arch.py "${OUTPUT_FOLDER}"/*.src.rpm ${platform_arch}
+	python /rhel/check_arch.py "${OUTPUT_FOLDER}"/*.src.rpm ${platform_arch}
 	rc=$?; if [[ $rc != 0 ]]; then exit 6; fi
 	printf '%s\n' '--> Building rpm.'
 	try_rebuild=true
