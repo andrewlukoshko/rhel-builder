@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 
 #
 # Check if a package can be built for the given architecture
@@ -21,7 +21,6 @@ ts = rpm.TransactionSet()
 ts.setVSFlags(~(rpm.RPMVSF_NEEDPAYLOAD))
 
 fdno = os.open(srpm, os.O_RDONLY)
-
 hdr = ts.hdrFromFdno(fdno)
 
 if hdr['excludearch']:
@@ -35,6 +34,7 @@ exit_code = 0
 if hdr['exclusivearch']:
     exit_code = 1
     for a in hdr['exclusivearch']:
+        print(a)
         if a == platform_arch:
             exit_code = 0
             break
