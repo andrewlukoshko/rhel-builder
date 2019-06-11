@@ -290,7 +290,7 @@ build_rpm() {
 	fi
 
 	printf '%s\n' '--> Build src.rpm'
-	spec_name=`ls -1 $build_package | grep '.spec$'`
+	spec_name=`ls -1 $build_package | grep '\.spec$'`
 	try_rebuild=true
 	retry=0
 	while $try_rebuild; do
@@ -416,7 +416,7 @@ find_spec() {
 	[ "$rerun_tests" = 'true' ] && return 0
 
 	# Check count of *.spec files (should be one)
-	x=$(ls -1 | grep -c '.spec$' | sed 's/^ *//' | sed 's/ *$//')
+	x=$(ls -1 | grep -c '\.spec$' | sed 's/^ *//' | sed 's/ *$//')
 	if [ "$x" -eq "0" ]; then
 		printf '%s\n' '--> There are no spec files in repository.'
 		exit 1
