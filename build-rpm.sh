@@ -4,7 +4,7 @@ set -x
 cleanup() {
 	printf '%s\n' '--> Cleaning up...'
 	sudo rm -fv /etc/rpm/platform
-	sudo rm -fv /etc/mock/default.cfg
+#	sudo rm -fv /etc/mock/default.cfg
 	sudo rm -rf /var/lib/mock/*
 	sudo rm -rf /var/cache/mock/*-${platform_arch}/yum_cache
 	sudo rm -rf /var/cache/yum/*
