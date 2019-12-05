@@ -38,7 +38,7 @@ fi
 
 if [ "${platform_name}" = 'rosa-server80' ]; then
 cat <<EOF>> $default_cfg
-config_opts['chroot_setup_cmd'] = 'install tar gcc-c++ redhat-rpm-config redhat-release which xz sed make bzip2 gzip gcc coreutils unzip shadow-utils diffutils cpio bash gawk rpm-build info patch util-linux findutils grep rpm-build'
+config_opts['chroot_setup_cmd'] = 'install tar gcc-c++ redhat-rpm-config redhat-release which xz sed make bzip2 gzip gcc coreutils unzip shadow-utils diffutils cpio bash gawk rpm-build info patch util-linux findutils grep rpm-build buildsys-macros-res8'
 EOF
 else
 cat <<EOF>> $default_cfg
