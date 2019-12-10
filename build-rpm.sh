@@ -294,7 +294,7 @@ build_rpm() {
 	
 	if [ "$platform_name" = "rosa-virtualization4" ]; then
 		sed -i '/^%changelog/q' $build_package/${spec_name}
-		echo "* $(LANG=C date '+%a %b %d %H:00:00 %Y') ROSA Build platform (ABF) <support@ntcit-rosa.ru>" >> $build_package/$spec_name
+		echo "* $(LANG=C date '+%a %b %d %H:00:00 %Y') ROSA Build platform (ABF) <support@rosalinux.ru>" >> $build_package/$spec_name
 		echo "- Собрано специалистами ООО "НТЦ ИТ РОСА" с использованием сборочной среды ABF" >> $build_package/$spec_name
 	fi
 	
