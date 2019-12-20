@@ -291,13 +291,9 @@ build_rpm() {
 
 	printf '%s\n' '--> Build src.rpm'
 	spec_name=`ls -1 $build_package | grep '\.spec$'`
-
-	if [ "$platform_name" = "rosa-virtualization4" ] || [ "$platform_name" = "rosa-server80" ] ; then
-		sed -i '/^%changelog/q' $build_package/${spec_name}
-		echo "* $(LANG=C date '+%a %b %d %Y') ROSA Build platform (ABF) <support@rosalinux.ru>" >> $build_package/$spec_name
-		echo '- Собрано специалистами ООО "НТЦ ИТ РОСА" с использованием сборочной среды ABF' >> $build_package/$spec_name
-	fi
-
+	sed -i '/^%changelog/q' $build_package/${spec_name}
+	echo "* $(LANG=C date '+%a %b %d %Y') ROSA Build platform (ABF) <support@rosalinux.ru>" >> $build_package/$spec_name
+	echo '- Собрано специалистами ООО "НТЦ ИТ РОСА" с использованием сборочной среды ABF' >> $build_package/$spec_name
 	try_rebuild=true
 	retry=0
 	while $try_rebuild; do
