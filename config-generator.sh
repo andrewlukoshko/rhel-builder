@@ -28,11 +28,11 @@ gen_included_repos() {
 
 if [ "${platform_arch}" = 'i586' ]; then
 cat <<EOF> $default_cfg
-config_opts['target_arch'] = 'i686'
+config_opts['target_arch'] = 'i686 --without check'
 EOF
 else
 cat <<EOF> $default_cfg
-config_opts['target_arch'] = '$platform_arch'
+config_opts['target_arch'] = '$platform_arch --without check'
 EOF
 fi
 
