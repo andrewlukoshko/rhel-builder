@@ -291,7 +291,7 @@ build_rpm() {
 
 	printf '%s\n' '--> Build src.rpm'
 	spec_name=`ls -1 $build_package | grep '\.spec$'`
-	sed -i '/^URL: /d' $build_package/${spec_name}
+	sed -i '/^[Uu][Rr][Ll]: /d' $build_package/${spec_name}
 	sed -i '/^%changelog/q' $build_package/${spec_name}
 	echo "* $(LANG=C date '+%a %b %d %Y') ROSA Build platform (ABF) <support@rosalinux.ru>" >> $build_package/$spec_name
 	echo '- Собрано специалистами ООО "НТЦ ИТ РОСА" с использованием сборочной среды ABF' >> $build_package/$spec_name
