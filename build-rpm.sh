@@ -361,7 +361,7 @@ build_rpm() {
 	while $try_rebuild; do
 		sudo rm -rf /var/cache/yum/*
 		sudo rm -rf /var/lib/mock/"${platform_name:?}"-"${platform_arch:?}"/root/var/cache/yum/*
-		$MOCK_BIN -v --update --configdir=$config_dir --rebuild "${OUTPUT_FOLDER}"/*.src.rpm --no-cleanup-after --no-clean $extra_build_rpm_options --resultdir="${OUTPUT_FOLDER}"
+		$MOCK_BIN -v --update --configdir=$config_dir --rebuild "${OUTPUT_FOLDER}"/*.src.rpm --no-cleanup-after --no-clean $extra_build_rpm_options --resultdir="${OUTPUT_FOLDER}" --nocheck
 		rc=${PIPESTATUS[0]}
 		try_rebuild=false
 		if [ "${rc}" != 0 ] && [ "${retry}" -lt "${MAX_RETRIES}" ]; then
