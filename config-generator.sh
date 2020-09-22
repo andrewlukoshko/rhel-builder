@@ -42,7 +42,7 @@ config_opts['chroot_setup_cmd'] = 'install tar gcc-c++ redhat-rpm-config redhat-
 EOF
 else
 cat <<EOF>> $default_cfg
-config_opts['chroot_setup_cmd'] = 'install @buildsys-build scl-utils-build'
+config_opts['chroot_setup_cmd'] = 'install @buildsys-build'
 EOF
 fi
 
