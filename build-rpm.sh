@@ -280,8 +280,8 @@ build_rpm() {
 	# We will rerun the build in case when repository is modified in the middle,
 	# but for safety let's limit number of retest attempts
 	# (since in case when repository metadata is really broken we can loop here forever)
-	MAX_RETRIES=10
-	WAIT_TIME=60
+	MAX_RETRIES=1
+	WAIT_TIME=30
 	RETRY_GREP_STR="Unable to find a match\|Error downloading packages\|All mirrors were already tried\|Cannot download\|Some packages could not be found"
 
 	if [ "$rerun_tests" = 'true' ]; then
@@ -362,7 +362,7 @@ build_rpm() {
 	while $try_rebuild; do
 		sudo rm -rf /var/cache/yum/*
 		sudo rm -rf /var/lib/mock/"${platform_name:?}"-"${platform_arch:?}"/root/var/cache/yum/*
-		$MOCK_BIN -v --update --configdir=$config_dir --rebuild "${OUTPUT_FOLDER}"/*.src.rpm --no-cleanup-after --no-clean $extra_build_rpm_options --resultdir="${OUTPUT_FOLDER}"
+		$MOCK_BIN -v --update --configdir=$config_dir --rebuild "${OUTPUT_FOLDER}"/*.src.rpm --no-cleanup-after --no-clean $extra_build_rpm_options --resultdir="${OUTPUT_FOLDER}" --nocheck
 		rc=${PIPESTATUS[0]}
 		try_rebuild=false
 		if [ "${rc}" != 0 ] && [ "${retry}" -lt "${MAX_RETRIES}" ]; then

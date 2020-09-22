@@ -28,11 +28,11 @@ gen_included_repos() {
 
 if [ "${platform_arch}" = 'i586' ]; then
 cat <<EOF> $default_cfg
-config_opts['target_arch'] = 'i686 --without check'
+config_opts['target_arch'] = 'i686'
 EOF
 else
 cat <<EOF> $default_cfg
-config_opts['target_arch'] = '$platform_arch --without check'
+config_opts['target_arch'] = '$platform_arch'
 EOF
 fi
 
@@ -42,7 +42,7 @@ config_opts['chroot_setup_cmd'] = 'install tar gcc-c++ redhat-rpm-config redhat-
 EOF
 else
 cat <<EOF>> $default_cfg
-config_opts['chroot_setup_cmd'] = 'install @buildsys-build'
+config_opts['chroot_setup_cmd'] = 'install @buildsys-build scl-utils-build'
 EOF
 fi
 
